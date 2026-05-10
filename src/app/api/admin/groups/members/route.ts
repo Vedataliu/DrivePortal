@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error) {
-      // Check for unique constraint violation
+
       if (error.code === '23505') {
          return NextResponse.json({ error: "User is already in this group" }, { status: 400 });
       }

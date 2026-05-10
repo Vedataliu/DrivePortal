@@ -4,10 +4,12 @@ import { useEffect, useRef, useState } from "react";
 import { Search, Bell, Menu, ChevronDown, LogOut } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
+import { useMobileMenu } from "@/contexts/MobileMenuContext";
 
 export function Header() {
   const pathname = usePathname();
   const { user, logout } = useAuth();
+  const { toggle } = useMobileMenu();
   const section = pathname === "/" ? "Dashboard" : pathname.replace("/", "").replace("-", " ");
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement | null>(null);
@@ -34,13 +36,16 @@ export function Header() {
   if (["/login", "/register"].includes(pathname)) return null;
 
   return (
-    <header className="h-16 border-b border-border/70 bg-background/80 backdrop-blur sticky top-0 z-40 flex items-center justify-between px-6">
-      <div className="flex items-center gap-4">
-        <button className="md:hidden p-2 -ml-2 text-muted-foreground hover:text-foreground transition-colors">
+    <header className="h-16 border-b border-border/70 bg-background/80 backdrop-blur sticky top-0 z-40 flex items-center justify-between px-4 md:px-6">
+      <div className="flex items-center gap-2 md:gap-4">
+        <button 
+          onClick={toggle}
+          className="md:hidden p-2 -ml-2 text-muted-foreground hover:text-foreground transition-colors"
+        >
           <Menu className="w-5 h-5" />
         </button>
-        <div className="hidden sm:block">
-          <p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">DrivePortal</p>
+        <div className="block">
+          <p className="hidden md:block text-xs uppercase tracking-[0.14em] text-muted-foreground">DrivePortal</p>
           <h2 className="text-sm font-medium capitalize">{section}</h2>
         </div>
         <div className="relative hidden md:block">

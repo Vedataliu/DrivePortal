@@ -9,17 +9,14 @@ export default function AdminPage() {
   const [activeModal, setActiveModal] = useState<"group" | "folder" | "permission" | "member" | null>(null);
   const { showToast } = useToast();
 
-  // Data States
   const [users, setUsers] = useState<any[]>([]);
   const [groups, setGroups] = useState<any[]>([]);
   const [folders, setFolders] = useState<any[]>([]);
   const [files, setFiles] = useState<any[]>([]);
 
-  // Form States
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
-  // Modal Inputs
   const [folderName, setFolderName] = useState("");
   const [groupName, setGroupName] = useState("");
   const [permissionTargetType, setPermissionTargetType] = useState<"FILE" | "FOLDER">("FILE");
@@ -59,7 +56,7 @@ export default function AdminPage() {
 
     const formData = new FormData();
     formData.append("file", e.target.files[0]);
-    formData.append("folderId", "root"); // or a selected folder state
+    formData.append("folderId", "root");
 
     try {
       const res = await fetch("/api/admin/files", { method: "POST", body: formData });
@@ -222,7 +219,6 @@ export default function AdminPage() {
         <p className="text-muted-foreground">Manage users, groups, and permissions securely via RBAC.</p>
       </div>
 
-      {/* Admin Actions */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {[
           { id: "group", name: "Create Group", icon: Users, desc: "Group users for bulk access.", color: "text-purple-500", bg: "bg-purple-500/10" },
@@ -248,7 +244,6 @@ export default function AdminPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
-        {/* Global Upload */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -274,7 +269,6 @@ export default function AdminPage() {
           </button>
         </motion.div>
 
-        {/* File and Folder Management List */}
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -287,27 +281,27 @@ export default function AdminPage() {
 
           <div className="space-y-3">
             {folders.map(f => (
-              <div key={f.id} className="flex items-center justify-between p-3 rounded-lg bg-background/80 border border-border/70 transition-colors hover:bg-background">
-                <div className="flex items-center gap-3">
-                  <Folder className="w-5 h-5 text-emerald-500" />
-                  <span className="font-medium text-sm">{f.name}</span>
+              <div key={f.id} className="flex items-center justify-between p-3 rounded-lg bg-background/80 border border-border/70 transition-colors hover:bg-background gap-3">
+                <div className="flex items-center gap-3 min-w-0">
+                  <Folder className="w-5 h-5 text-emerald-500 shrink-0" />
+                  <span className="font-medium text-sm truncate">{f.name}</span>
                 </div>
-                <button onClick={() => handleDeleteFolder(f.id, f.name)} className="text-red-500/70 hover:text-red-500 p-2 hover:bg-red-500/10 rounded-lg transition-colors">
+                <button onClick={() => handleDeleteFolder(f.id, f.name)} className="text-red-500/70 hover:text-red-500 p-2 hover:bg-red-500/10 rounded-lg transition-colors shrink-0">
                   <Trash2 className="w-4 h-4" />
                 </button>
               </div>
             ))}
 
             {files.map(file => (
-              <div key={file.id} className="flex items-center justify-between p-3 rounded-lg bg-background/80 border border-border/70 transition-colors hover:bg-background">
-                <div className="flex items-center gap-3">
-                  <File className="w-5 h-5 text-blue-500" />
-                  <div className="flex flex-col">
-                    <span className="font-medium text-sm truncate max-w-[200px]">{file.name}</span>
+              <div key={file.id} className="flex items-center justify-between p-3 rounded-lg bg-background/80 border border-border/70 transition-colors hover:bg-background gap-3">
+                <div className="flex items-center gap-3 min-w-0">
+                  <File className="w-5 h-5 text-blue-500 shrink-0" />
+                  <div className="flex flex-col min-w-0">
+                    <span className="font-medium text-sm truncate">{file.name}</span>
                     <span className="text-xs text-muted-foreground">{(file.size / 1024 / 1024).toFixed(2)} MB</span>
                   </div>
                 </div>
-                <button onClick={() => handleDeleteFile(file.id, file.name)} className="text-red-500/70 hover:text-red-500 p-2 hover:bg-red-500/10 rounded-lg transition-colors">
+                <button onClick={() => handleDeleteFile(file.id, file.name)} className="text-red-500/70 hover:text-red-500 p-2 hover:bg-red-500/10 rounded-lg transition-colors shrink-0">
                   <Trash2 className="w-4 h-4" />
                 </button>
               </div>
@@ -369,7 +363,6 @@ export default function AdminPage() {
         )}
       </AnimatePresence>
 
-      {/* Modals */}
       <AnimatePresence>
         {activeModal && (
           <motion.div
@@ -379,7 +372,7 @@ export default function AdminPage() {
             <motion.div
               initial={{ y: 8, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 8, opacity: 0 }}
               transition={{ duration: 0.16, ease: "easeOut" }}
-              className="bg-card w-full max-w-md p-6 rounded-xl border border-border shadow-xl relative"
+              className="bg-card w-full max-w-md p-6 rounded-xl border border-border shadow-xl relative max-h-[90vh] overflow-y-auto"
             >
               <button onClick={() => setActiveModal(null)} className="absolute top-4 right-4 text-muted-foreground hover:text-foreground">
                 <X className="w-5 h-5" />

@@ -50,8 +50,7 @@ export default function Dashboard() {
         <p className="text-sm text-muted-foreground">Overview of your DrivePortal workspace and recent files.</p>
       </div>
 
-      {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {stats.map((stat, index) => (
           <motion.div
             key={stat.name}
@@ -73,9 +72,7 @@ export default function Dashboard() {
         ))}
       </div>
 
-      {/* Main Content Area */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Recent Files */}
         <div className="col-span-1 lg:col-span-2 space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold">All System Files</h2>
@@ -90,23 +87,23 @@ export default function Dashboard() {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.2 + (i * 0.05) }}
-                  className="flex items-center justify-between p-4 hover:bg-secondary/25 transition-colors group"
+                  className="flex flex-col sm:flex-row sm:items-center justify-between p-4 hover:bg-secondary/25 transition-colors group gap-4 sm:gap-0"
                 >
-                  <div className="flex items-center gap-4">
-                    <div className="p-2.5 bg-secondary/40 rounded-lg">
+                  <div className="flex items-center gap-4 min-w-0">
+                    <div className="p-2.5 bg-secondary/40 rounded-lg shrink-0">
                       <FileText className="w-5 h-5 text-blue-400" />
                     </div>
-                    <div>
-                      <p className="font-medium text-sm text-foreground/90 group-hover:text-primary transition-colors">{file.name}</p>
+                    <div className="min-w-0">
+                      <p className="font-medium text-sm text-foreground/90 group-hover:text-primary transition-colors truncate">{file.name}</p>
                       <div className="flex items-center gap-2 mt-1">
-                        <span className="text-xs text-muted-foreground">{file.type}</span>
-                        <span className="w-1 h-1 rounded-full bg-muted-foreground/50"></span>
-                        <span className="text-xs text-muted-foreground">{(file.size / 1024 / 1024).toFixed(2)} MB</span>
+                        <span className="text-xs text-muted-foreground truncate">{file.type}</span>
+                        <span className="w-1 h-1 rounded-full bg-muted-foreground/50 shrink-0"></span>
+                        <span className="text-xs text-muted-foreground shrink-0">{(file.size / 1024 / 1024).toFixed(2)} MB</span>
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="flex items-center justify-end sm:gap-4 shrink-0">
+                    <div className="flex items-center gap-1 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
                       <button 
                         onClick={() => window.open(`/api/files/download?fileId=${file.id}`, "_blank")}
                         className="p-2 hover:bg-secondary/60 rounded-lg text-muted-foreground hover:text-foreground transition-colors"
@@ -124,7 +121,6 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Quick Actions / Folders */}
         <div className="space-y-4">
           <h2 className="text-xl font-semibold">Quick Actions</h2>
           <motion.div

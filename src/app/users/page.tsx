@@ -64,21 +64,21 @@ export default function UsersPage() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.03, duration: 0.16 }}
-                className="flex items-center justify-between p-4 hover:bg-secondary/25 transition-colors"
+                className="flex flex-col sm:flex-row sm:items-center justify-between p-4 hover:bg-secondary/25 transition-colors gap-4 sm:gap-0"
               >
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                <div className="flex items-center gap-4 min-w-0">
+                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
                     <Users className="w-5 h-5 text-primary" />
                   </div>
-                  <div>
-                    <p className="font-medium text-sm text-foreground/90">{u.name || "No Name"}</p>
+                  <div className="min-w-0">
+                    <p className="font-medium text-sm text-foreground/90 truncate">{u.name || "No Name"}</p>
                     <div className="flex items-center gap-2 mt-1">
-                      <Mail className="w-3 h-3 text-muted-foreground" />
-                      <span className="text-xs text-muted-foreground">{u.email}</span>
+                      <Mail className="w-3 h-3 text-muted-foreground shrink-0" />
+                      <span className="text-xs text-muted-foreground truncate">{u.email}</span>
                     </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center justify-end sm:gap-4 shrink-0">
                   <div className={`px-2.5 py-1 rounded-md text-[10px] font-bold tracking-wider ${u.role === 'ADMIN' ? 'bg-amber-500/10 text-amber-500' : 'bg-blue-500/10 text-blue-500'}`}>
                     {u.role}
                   </div>
@@ -101,7 +101,6 @@ export default function UsersPage() {
         )}
       </div>
 
-      {/* Delete Confirmation Modal */}
       <AnimatePresence>
         {userToDelete && (
           <>

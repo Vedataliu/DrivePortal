@@ -18,26 +18,22 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ files: files || [], folders: folders || [] });
   }
 
-  // Standard user: filter based on permissions
   const { data: userGroups } = await supabase.from("group_members").select("group_id").eq("user_id", userId);
   const groupIds = userGroups?.map(g => g.group_id) || [];
 
   const { data: allPerms } = await supabase.from("permissions").select("*");
 
-  // Filter perms applicable to this user
   const userPerms = allPerms?.filter(p => p.user_id === userId || groupIds.includes(p.group_id)) || [];
 
   const allowedFileIds = userPerms.filter(p => p.target_type === "FILE").map(p => p.target_id);
   const allowedFolderIds = userPerms.filter(p => p.target_type === "FOLDER").map(p => p.target_id);
 
-  // Fetch all accessible folders
   let accessibleFolders: any[] = [];
   if (allowedFolderIds.length > 0) {
     const { data } = await supabase.from("folders").select("*").in("id", allowedFolderIds);
     if (data) accessibleFolders = data;
   }
 
-  // Fetch all accessible files (direct access or via folder access)
   let accessibleFiles: any[] = [];
   
   let query = supabase.from("files").select("*");

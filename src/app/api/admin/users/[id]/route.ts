@@ -14,14 +14,12 @@ export async function DELETE(
       return NextResponse.json({ error: "Missing user ID" }, { status: 400 });
     }
 
-    // Prevent deleting oneself
     if (userId === requestUserId) {
       return NextResponse.json({ error: "You cannot delete your own admin account" }, { status: 403 });
     }
 
     const supabase = getServiceSupabase();
 
-    // Fetch user to ensure they exist and we don't delete another admin (optional safeguard)
     const { data: userToDelete } = await supabase
       .from("users")
       .select("role")
@@ -32,12 +30,10 @@ export async function DELETE(
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Optional: Protect other admins from being deleted by this admin
     if (userToDelete.role === "ADMIN") {
       return NextResponse.json({ error: "Cannot delete another administrator" }, { status: 403 });
     }
 
-    // Delete from users table (Supabase foreign key constraints should cascade delete from group_members and permissions)
     const { error: deleteError } = await supabase
       .from("users")
       .delete()

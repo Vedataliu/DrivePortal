@@ -33,7 +33,6 @@ export default function MyFilesPage() {
   }, []);
 
   const handleDownload = (fileId: string) => {
-    // Open the download endpoint which returns Content-Disposition attachment
     window.open(`/api/files/download?fileId=${fileId}`, "_blank");
   };
 
@@ -74,7 +73,7 @@ export default function MyFilesPage() {
                   <Folder className="w-7 h-7 text-primary" />
                 </div>
               </div>
-              <div className="mt-auto">
+              <div className="mt-auto min-w-0 w-full">
                 <h3 className="font-semibold text-foreground/90 truncate mb-1 group-hover:text-primary transition-colors">
                   {folder.name}
                 </h3>
@@ -112,13 +111,13 @@ export default function MyFilesPage() {
                   </button>
                 </div>
                 
-                <div className="mt-auto">
+                <div className="mt-auto min-w-0 w-full">
                   <h3 className="font-semibold text-sm text-foreground/90 truncate mb-1 group-hover:text-primary transition-colors" title={file.name}>
                     {file.name}
                   </h3>
-                  <div className="flex items-center justify-between text-xs text-muted-foreground border-t border-border/50 pt-2 mt-2">
-                    <span>{(file.size / 1024 / 1024).toFixed(2)} MB</span>
-                    <span className="truncate max-w-[90px]">{file.type || "unknown"}</span>
+                  <div className="flex items-center justify-between text-xs text-muted-foreground border-t border-border/50 pt-2 mt-2 gap-2">
+                    <span className="shrink-0">{(file.size / 1024 / 1024).toFixed(2)} MB</span>
+                    <span className="truncate min-w-0 text-right">{file.type || "unknown"}</span>
                   </div>
                 </div>
               </motion.div>

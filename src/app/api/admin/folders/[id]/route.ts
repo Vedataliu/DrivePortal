@@ -18,13 +18,10 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
       }
     }
 
-
-    // We will delete explicitly just in case CASCADE isn't set up
     if (files && files.length > 0) {
       await supabase.from("files").delete().eq("folder_id", folderId);
     }
-    
-    // Also delete permissions
+
     await supabase.from("permissions").delete().eq("target_id", folderId).eq("target_type", "FOLDER");
 
     const { error: folderError } = await supabase.from("folders").delete().eq("id", folderId);

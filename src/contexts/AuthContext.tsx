@@ -26,7 +26,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   useEffect(() => {
-    // Skip fetching session if on public routes
+
     if (["/login", "/register"].includes(pathname)) {
       setLoading(false);
       return;

@@ -5,45 +5,35 @@ import { verifyToken } from './lib/auth';
 const PUBLIC_ROUTES = ['/login', '/register', '/api/auth/login', '/api/auth/register', '/api/health'];
 
 export async function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-  
-  // Allow public routes
+  const { pathname } = request.nextUrl;
   if (PUBLIC_ROUTES.some(route => pathname.startsWith(route))) {
     return NextResponse.next();
   }
 
   const token = request.cookies.get('auth_token')?.value;
 
-  if (!token) {
-    // If it's an API route without token, return 401
+  if (!token) {
     if (pathname.startsWith('/api')) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-    // For UI pages, redirect to login
+    }
     return NextResponse.redirect(new URL('/login', request.url));
   }
 
   try {
-    const payload = await verifyToken(token);
-
-    // RBAC: Check if accessing Admin endpoints/pages
+    const payload = await verifyToken(token);
     const isAdminArea =
       pathname.startsWith('/api/admin') ||
       pathname.startsWith('/admin') ||
       pathname.startsWith('/users');
 
     if (isAdminArea) {
-      if (payload.role !== 'ADMIN') {
-        // Return 403 Forbidden for API
+      if (payload.role !== 'ADMIN') {
         if (pathname.startsWith('/api')) {
           return NextResponse.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
-        }
-        // Redirect to dashboard for UI
+        }
         return NextResponse.redirect(new URL('/', request.url));
       }
-    }
-
-    // Attach user to headers so API routes can access the context
+    }
     const requestHeaders = new Headers(request.headers);
     requestHeaders.set('x-user-id', payload.userId);
     requestHeaders.set('x-user-role', payload.role);
@@ -55,8 +45,7 @@ export async function proxy(request: NextRequest) {
       },
     });
 
-  } catch (error) {
-    // Invalid token
+  } catch (error) {
     if (pathname.startsWith('/api')) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
     }

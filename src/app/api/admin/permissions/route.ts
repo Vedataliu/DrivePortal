@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error) {
-      // Check for unique constraint if we have one, otherwise just generic error
+
       console.error("DB Error:", error);
       return NextResponse.json({ error: "Failed to assign permission" }, { status: 500 });
     }

@@ -9,17 +9,18 @@ import {
   Users,
   Settings,
   LogOut,
-  ShieldAlert
+  ShieldAlert,
+  X
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
+import { useMobileMenu } from "@/contexts/MobileMenuContext";
 
 export function Sidebar() {
   const pathname = usePathname();
   const { user, logout } = useAuth();
+  const { isOpen, setIsOpen } = useMobileMenu();
 
-  // If on public pages like login, don't show the sidebar properly or return null
-  // But our layout wraps AuthProvider and Sidebar. To prevent flashing:
   if (["/login", "/register"].includes(pathname)) return null;
 
   const isAdmin = user?.role === "ADMIN";
@@ -34,22 +35,28 @@ export function Sidebar() {
     { name: "Settings", href: "/settings", icon: Settings },
   ];
 
-  return (
-    <div className="w-64 border-r border-border/70 bg-background/70 hidden md:flex flex-col h-screen backdrop-blur-sm">
-      <div className="h-16 flex items-center px-6 border-b border-border/70">
+  const sidebarContent = (
+    <>
+      <div className="h-16 flex items-center justify-between px-6 border-b border-border/70">
         <div className="flex items-center gap-2 text-primary font-semibold text-lg tracking-tight">
           <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white">
             DP
           </div>
           DrivePortal
         </div>
+        <button 
+          onClick={() => setIsOpen(false)}
+          className="md:hidden p-2 text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <X className="w-5 h-5" />
+        </button>
       </div>
 
-      <nav className="flex-1 py-5 px-3.5 flex flex-col gap-1.5">
+      <nav className="flex-1 py-5 px-3.5 flex flex-col gap-1.5 overflow-y-auto">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           return (
-            <Link key={item.name} href={item.href} className="relative group">
+            <Link key={item.name} href={item.href} onClick={() => setIsOpen(false)} className="relative group">
               {isActive && (
                 <motion.div
                   layoutId="sidebar-active"
@@ -87,6 +94,37 @@ export function Sidebar() {
           <span className="font-medium text-sm">Log out</span>
         </button>
       </div>
-    </div>
+    </>
+  );
+
+  return (
+    <>
+      <div className="w-64 border-r border-border/70 bg-background/70 hidden md:flex flex-col h-screen backdrop-blur-sm">
+        {sidebarContent}
+      </div>
+
+      <AnimatePresence>
+        {isOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsOpen(false)}
+              className="fixed inset-0 bg-background/80 backdrop-blur-sm z-40 md:hidden"
+            />
+            <motion.div
+              initial={{ x: "-100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "-100%" }}
+              transition={{ type: "spring", bounce: 0, duration: 0.3 }}
+              className="fixed inset-y-0 left-0 w-64 border-r border-border/70 bg-background/95 backdrop-blur-xl z-50 flex flex-col md:hidden"
+            >
+              {sidebarContent}
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </>
   );
 }

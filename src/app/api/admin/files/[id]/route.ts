@@ -19,8 +19,8 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     
     if (storageError) {
       console.error("Storage delete error:", storageError);
-      // We continue to delete from DB even if storage delete fails to maintain consistency or handle orphans,
-      // but in a prod app we might want to be more careful.
+
+
     }
 
 

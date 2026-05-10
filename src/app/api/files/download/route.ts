@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
 
 
   if (role !== "ADMIN") {
-    // Get user's groups
+
     const { data: userGroups } = await supabase
       .from("group_members")
       .select("group_id")
@@ -34,10 +34,8 @@ export async function GET(request: NextRequest) {
       
     const groupIds = userGroups?.map(g => g.group_id) || [];
 
-    // Check direct file access
     let hasAccess = false;
 
-    // Check file permission
     const { data: filePerms } = await supabase
       .from("permissions")
       .select("*")
@@ -48,7 +46,6 @@ export async function GET(request: NextRequest) {
        hasAccess = true;
     }
 
-    // Check folder permission if file is in a folder
     if (!hasAccess && file.folder_id) {
        const { data: folderPerms } = await supabase
         .from("permissions")
@@ -80,8 +77,7 @@ export async function GET(request: NextRequest) {
 
   const response = new NextResponse(arrayBuffer);
   response.headers.set("Content-Type", file.type || "application/octet-stream");
-  
-  // BRD Requirement 5.1: Force download using Content-Disposition
+
   response.headers.set("Content-Disposition", `attachment; filename="${file.name}"`);
   
   return response;
